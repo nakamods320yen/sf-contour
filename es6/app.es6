@@ -18,8 +18,8 @@ class Map {
 		var customLayer = L.geoJson(null, {
 			style: this.getStyle,
 			onEachFeature: (feature, layer) => layer.on({
-				mousemove: this.showPopup.bind(this)
-				//mouseout: mouseout,
+				mousemove: this.mousemove.bind(this),
+				mouseout: this.mouseout.bind(this)
 				//click: zoomToFeature
 			}),
 		});
@@ -32,17 +32,19 @@ class Map {
 	}
 
 	getStyle(feature) {
-		// var color = 'blue', elv = feature.properties.ELEVATION;
-		// var opacity = Math.sqrt(elv)/30;
-		// if(opacity > 0.7) color = 'red';
-		// else if(opacity > 0.4) color = 'green';
-		// return {
-		// 	opacity: opacity,
-		// 	color: color
-		// }
+		var color = '#A0D2DB', elv = feature.properties.ELEVATION;
+		var opacity = Math.sqrt(elv)/30;
+		if(opacity > 0.8) color = '#D90558';
+		else if(opacity > 0.6) color = '#726DA8';
+		else if(opacity > 0.4) color = '#C490D1';
+		else if(opacity > 0.2) color = '#79ADDC';
+		return {
+			opacity: .2,
+			color: 'blue'
+		}
 	}
 
-	showPopup(e) {
+	mousemove(e) {
 		var layer = e.target, latlng = e.latlng;
 		var props = layer.feature.properties;
 
@@ -54,9 +56,21 @@ class Map {
 			'<span>SHAPE__Len: '+props.SHAPE__Len+'</span>',
 		].join('<br>'));
 		if (!this.popup._map) this.popup.openOn(this.map);
+		layer.setStyle({
+			opacity: .8,
+			color: '#D90558'
+			weight: 50
+		});
 
+		//window.clearTimeout(this.closeTooltip);
+	}
 
-		window.clearTimeout(this.closeTooltip);
+	mouseout(e) {
+		e.target.setStyle({
+			opacity: .2,
+			color: 'blue',
+			weight: 5
+		});
 	}
 
 
